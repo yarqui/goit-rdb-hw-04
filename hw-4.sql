@@ -1,0 +1,254 @@
+-- =======
+-- 1.
+-- =======
+-- a)
+-- create schema LibraryManagement;
+-- use LibraryManagement;
+-- b)
+-- CREATE TABLE authors (
+-- author_id INT AUTO_INCREMENT PRIMARY KEY,
+-- author_name VARCHAR(50)
+-- );
+-- c)
+-- CREATE TABLE genres (
+-- 	genre_id INT AUTO_INCREMENT PRIMARY KEY,
+--  genre_name VARCHAR(100)
+-- );
+-- d)
+-- CREATE TABLE books (
+-- 	book_id INT AUTO_INCREMENT PRIMARY KEY,
+--     title VARCHAR(100),
+--     publication_year year,
+--     author_id INT,
+--     FOREIGN KEY (author_id) REFERENCES authors(author_id) ON DELETE SET NULL,
+--     genre_id INT,
+--     FOREIGN KEY (genre_id) REFERENCES genres(genre_id) ON DELETE SET NULL
+-- );
+-- e)
+-- CREATE TABLE users (
+-- 	user_id INT AUTO_INCREMENT PRIMARY KEY,
+--     username VARCHAR(20),
+--     email VARCHAR(30)
+-- );
+-- f)
+-- CREATE TABLE borrowed_books (
+-- 	borrow_id INT AUTO_INCREMENT PRIMARY KEY,
+--     book_id INT,
+--     FOREIGN KEY (book_id) REFERENCES books(book_id) ON DELETE SET NULL,
+--     user_id INT,
+--     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
+-- 	   borrow_date DATE,
+--     return_date DATE
+-- );
+
+-- =======
+-- 2.
+-- =======
+-- INSERT INTO authors (author_name)
+-- VALUES
+-- ('J .D. Salinger'),
+-- ('I. Franko');
+
+-- INSERT INTO genres (genre_name)
+-- VALUES
+-- ('Coming-of-age fiction'),
+-- ('Poem');
+
+-- INSERT INTO books (title, publication_year, author_id, genre_id)
+-- VALUES
+-- ('The Catcher in the Rye', 1951, 1, 1),
+-- ('Kameniari', 1987, 2, 2);
+
+-- INSERT INTO users (username, email)
+-- VALUES
+-- ('Yar', 'y.pelykh@gmail.com'),
+-- ('Polly', 'paul@example.com');
+
+-- INSERT INTO borrowed_books (book_id, user_id, borrow_date, return_date)
+-- VALUES
+-- (1, 2, '2024-12-20', '2024-06-03'),
+-- (2, 1, '2023-06-02', '2024-03-29');
+-- =======
+-- 3.
+-- =======
+-- use mydb;
+-- SELECT orders.id AS order_id,
+-- products.name AS product_name,
+-- order_details.product_id,
+-- order_details.quantity AS product_quantity,
+-- suppliers.name AS product_supplier,
+-- categories.name AS product_category,
+-- customers.name AS customer_name,
+-- employees.first_name AS employee_name,
+-- shippers.name AS shipper_name
+-- FROM orders
+-- INNER JOIN order_details ON orders.id = order_details.order_id
+-- INNER JOIN products ON products.id = order_details.product_id
+-- INNER JOIN customers ON orders.customer_id = customers.id
+-- INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- INNER join categories ON categories.id = products.category_id
+-- INNER JOIN suppliers ON suppliers.id = products.supplier_id;
+
+-- =======
+-- 4.1
+-- =======
+-- SELECT COUNT(*) AS total_rows
+-- FROM (
+-- 	SELECT
+-- 	orders.id AS order_id,
+-- 	products.name AS product_name,
+-- 	order_details.product_id,
+-- 	order_details.quantity AS product_quantity,
+-- 	suppliers.name AS product_supplier,
+-- 	categories.name AS product_category,
+-- 	customers.name AS customer_name,
+-- 	employees.first_name AS employee_name,
+-- 	shippers.name AS shipper_name
+-- 	FROM orders
+-- 	INNER JOIN order_details ON orders.id = order_details.order_id
+-- 	INNER JOIN products ON products.id = order_details.product_id
+-- 	INNER JOIN customers ON orders.customer_id = customers.id
+-- 	INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- 	INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- 	INNER join categories ON categories.id = products.category_id
+-- 	INNER JOIN suppliers ON suppliers.id = products.supplier_id
+-- ) AS joined_tables;
+
+-- =======
+-- 4.2
+-- =======
+-- To my opinion after I changed a few INNER JOIN to THE RIGHT/LEFT JOINs, nothing changed, because I had chosen 'orders' as an entry point (first JOIN),
+-- therefore limiting the results of the subsequent JOINs with the data, which references exist in the 'orders' table.
+-- In this way the first JOIN filtered out all the data from the other tables, that don't reference the order id.
+
+-- SELECT COUNT(*) AS total_rows
+-- FROM (
+-- 	SELECT
+-- 	orders.id AS order_id,
+-- 	products.name AS product_name,
+-- 	order_details.product_id,
+-- 	order_details.quantity AS product_quantity,
+-- 	suppliers.name AS product_supplier,
+-- 	categories.name AS product_category,
+-- 	customers.name AS customer_name,
+-- 	employees.first_name AS employee_name,
+-- 	shippers.name AS shipper_name
+-- 	FROM orders
+-- 	INNER JOIN order_details ON orders.id = order_details.order_id
+-- 	RIGHT JOIN products ON products.id = order_details.product_id
+-- 	INNER JOIN customers ON orders.customer_id = customers.id
+-- 	INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- 	INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- 	LEFT join categories ON categories.id = products.category_id
+-- 	LEFT JOIN suppliers ON suppliers.id = products.supplier_id
+-- ) AS joined_tables;
+
+-- =======
+-- 4.3
+-- =======
+-- SELECT orders.id AS order_id,
+-- products.name AS product_name,
+-- order_details.product_id,
+-- order_details.quantity AS product_quantity,
+-- suppliers.name AS product_supplier,
+-- categories.name AS product_category,
+-- customers.name AS customer_name,
+-- employees.employee_id,
+-- employees.first_name AS employee_name,
+-- shippers.name AS shipper_name
+-- FROM orders
+-- INNER JOIN order_details ON orders.id = order_details.order_id
+-- RIGHT JOIN products ON products.id = order_details.product_id
+-- INNER JOIN customers ON orders.customer_id = customers.id
+-- INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- LEFT join categories ON categories.id = products.category_id
+-- LEFT JOIN suppliers ON suppliers.id = products.supplier_id
+-- WHERE orders.employee_id > 3 AND orders.employee_id <= 10
+-- ;
+
+-- =======
+-- 4.4
+-- =======
+-- SELECT
+-- categories.name AS product_category,
+-- COUNT(*) AS total_orders,
+-- ROUND(AVG(order_details.quantity)) as average_quantity_per_order
+-- FROM orders
+-- INNER JOIN order_details ON orders.id = order_details.order_id
+-- RIGHT JOIN products ON products.id = order_details.product_id
+-- INNER JOIN customers ON orders.customer_id = customers.id
+-- INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- LEFT join categories ON categories.id = products.category_id
+-- LEFT JOIN suppliers ON suppliers.id = products.supplier_id
+-- WHERE orders.employee_id > 3 AND orders.employee_id <= 10
+-- GROUP BY product_category
+-- ORDER BY average_quantity_per_order DESC
+-- ;
+
+-- =======
+-- 4.5
+-- =======
+-- SELECT
+-- categories.name AS product_category,
+-- COUNT(*) AS total_orders,
+-- ROUND(AVG(order_details.quantity)) as average_quantity_per_order
+-- FROM orders
+-- INNER JOIN order_details ON orders.id = order_details.order_id
+-- RIGHT JOIN products ON products.id = order_details.product_id
+-- INNER JOIN customers ON orders.customer_id = customers.id
+-- INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- LEFT join categories ON categories.id = products.category_id
+-- LEFT JOIN suppliers ON suppliers.id = products.supplier_id
+-- WHERE orders.employee_id > 3 AND orders.employee_id <= 10
+-- GROUP BY product_category
+-- HAVING average_quantity_per_order > 21
+-- ORDER BY average_quantity_per_order DESC
+-- ;
+
+-- =======
+-- 4.6
+-- =======
+-- SELECT
+-- categories.name AS product_category,
+-- COUNT(*) AS total_orders,
+-- ROUND(AVG(order_details.quantity)) as average_quantity_per_order
+-- FROM orders
+-- INNER JOIN order_details ON orders.id = order_details.order_id
+-- RIGHT JOIN products ON products.id = order_details.product_id
+-- INNER JOIN customers ON orders.customer_id = customers.id
+-- INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- LEFT join categories ON categories.id = products.category_id
+-- LEFT JOIN suppliers ON suppliers.id = products.supplier_id
+-- WHERE orders.employee_id > 3 AND orders.employee_id <= 10
+-- GROUP BY product_category
+-- HAVING average_quantity_per_order > 21
+-- ORDER BY total_orders DESC
+-- ;
+
+-- =======
+-- 4.7
+-- =======
+-- SELECT
+-- categories.name AS product_category,
+-- COUNT(*) AS total_orders,
+-- ROUND(AVG(order_details.quantity)) as average_quantity_per_order
+-- FROM orders
+-- INNER JOIN order_details ON orders.id = order_details.order_id
+-- RIGHT JOIN products ON products.id = order_details.product_id
+-- INNER JOIN customers ON orders.customer_id = customers.id
+-- INNER JOIN employees ON employees.employee_id = orders.employee_id
+-- INNER JOIN shippers ON shippers.id = orders.shipper_id
+-- LEFT join categories ON categories.id = products.category_id
+-- LEFT JOIN suppliers ON suppliers.id = products.supplier_id
+-- WHERE orders.employee_id > 3 AND orders.employee_id <= 10
+-- GROUP BY product_category
+-- HAVING average_quantity_per_order > 21
+-- ORDER BY total_orders DESC
+-- LIMIT 4
+-- OFFSET 1
+-- ;
